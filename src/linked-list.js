@@ -1,170 +1,188 @@
 const Node = require('./node');
 
+function getNext(node) {
+	return node.next;
+}
+function getPrevious(node) {
+	return node.prev;
+}
 
 class LinkedList {
     constructor() {
-        this._nodes = [
-            {data: 'lower limiter',
-            previous: null,
-            next: ''},
-            {data: 'upper limiter',
-            previous: '',
-            next: null}
-        ];
-        this._length = 0;
+        this.length = 0;
         this._head = null;
         this._tail = null;
     }
     
     append(data) {
-        var node = {
-			index: null,
-            data: data,
-            previous: null,
-            next: null
-        };
-		
-		this._nodes.splice(this._length+1, 0,node);
-		this._length = this._nodes.length - 2;
-		node.index = this._length+1;
-		node.previous = this._nodes[this._length-1];
-		node.next = this._nodes[this._length+1];
-		this._nodes[this._length-1].next = node;
-		this._nodes[this._length+1].previous= node;
-		
-		if (this.length != 0) {
-			this._head = this._nodes[1];
+        var node = new Node(data);
+		this.length = this.length +1;
+		if(this.length == 1){
+			this._head = node;
+			this._tail = node;
+		} else {
+			var last = this._head;
+			for(var i = 1; i < this.length-1; i++ ) {
+				last = getNext(last);
+			}
+			last.next = node;
+			node.prev = last;
+			this._tail = node;
 		}
-		if (this._length != 0) {
-			this._tail = this._nodes[this._nodes.length-2];
-		}
-        return alert("node with data '" + data + "' insert at node with index " + this._length);
+		return this;
     }
 
-   get head() {
-	   
-	   return alert("index:" + eval(this._head.index -1) + ", data: " + this._head.data);
+   head() {
+	   if(this.length == 0) {
+		   return null;
+	   }
+	   return this._head.data;
    }
 
-   get tail() {
-	   return alert("index:" + eval(this._tail.index -1) + ", data: " + this._tail.data);
+   tail() {
+	   if(this.length == 0) {
+		   return null;
+	   }
+	   return this._tail.data;
    }
 
    at(index) {
-	   if(index > this._length) {
-		   return alert("there is no node with index " + index);
+	   if(index>this.length || index <0) {
+		   return -1;
 	   }
-	   for(var i = 0; i <= this._nodes.length-2; i++) {
-		   if (this._nodes[i].index == index) {
-			   return alert("for index(" + index + ") data is " + this._nodes[index].data);
-		   }
+	   	   	var node = this._head;
+	   if(index == 0) {
+		   return node.data;
 	   }
-	   }
+		for(var i = 1; i <= index; i++ ) {
+				node = getNext(node);
+			}
+			   return node.data;
+   }
+	  
    
 
    insertAt(index, data) {
-	    var node = {
-			index: index+1,
-            data: data,
-            previous: null,
-            next: null
-        };
-		
-		this._nodes.splice(index, 0,node);
-		this._length = this._nodes.length - 2;
-		node.previous = this._nodes[this._length-1];
-		node.next = this._nodes[this._length+1];
-		this._nodes[this._length-1].next = node;
-		this._nodes[this._length+1].previous= node;
-		
-		if (this.length != 0) {
-			this._head = this._nodes[1];
+	   if(this.length == 0) {
+			   this._head = node;
+			   this._tail = node;
+			   return this;
+		   }
+	   if(index>this.length+1 || index< 0) {
+			return -1;
 		}
-		if (this._length != 0) {
-			this._tail = this._nodes[this._nodes.length-2];
-		}
-        return alert("node with data '" + data + "' insert at node with index " + index);
+	    var node = new Node(data);
+		var last = this._head;
+	   if(index == 0) {
+		   last.prev = node;
+		   node.next = last;
+		   this._head = node;
+	   }
+	   if(index == 1){
+	   last.next = node;
+	   node.prev = last;
+	   this._tail = node;
+	   }
+		for(var i = 1; i <= index-1; i++ ) {
+				last = getNext(last);
+		if(last.next == null){
+	   last.next = node;
+	   node.prev = last;
+	   this._tail = node;
+	   } else {
+		   last.next.prev = node;
+		   node.next = last.next;
+		   node.previous = last;
+		   last.next = node;
+	   }
+	   this.length = this.length +1;
+        
+   }
+	   return this;
    }
 
-    get isEmpty() {
-		if(this._length != 0) {
-			return alert('not empty');
-		} else {return alert('empty');}
+    isEmpty() {
+		if(this.length != 0) {
+			return false;
+		} else {return true;}
 	}
 
-   get clear() {
-	   if(this._length == 0) {
-		   return alert('LinkedList is already empty');
-	   }
-		this._nodes.splice(1, this._length);
-	   this._nodes = [
-            {data: 'lower limiter',
-            previous: null,
-            next: ''},
-            {data: 'upper limiter',
-            previous: '',
-            next: null}
-        ];
-        this._length = 0;
+   clear() {
+	    this.length = 0;
         this._head = null;
         this._tail = null;
+	   return this;
 	}
 
     deleteAt(index) {
-		if(index >  this._length) {
-			return alert("there is no node with index " + index);
+		if(index> this.length || index < 0) {
+			return -1;
 		}
-		this._nodes[index-1].next = this._nodes[index+1];
-		this._nodes[index+1].previous = this._nodes[index-1];
-		this._nodes.splice(index, 1);
-		this._length = this._nodes.length - 2;
-		if (this.length != 0) {
-			this._head = this._nodes[1];
-		}
-		if (this._length != 0) {
-			this._tail = this._nodes[this._nodes.length-2];
-		}		
 		
+		var last = this._head;
+		if(index == 0) {
+			if (last.next == null) {
+				this._head = null;
+				this._tail = null;
+				return this;
+			}
+			last.next.prev = null;
+			this._head = last.next;
+		}
+		for(var i = 1; i < index; i++ ) {
+				last = getNext(last);
+		if(last.next == null){
+		    last.prev.next = null;
+		    this._tail = last.previous;		   
+	   } else {
+		   last.prev.next = last.next;
+		   last.next = last.previous;
+	   }
+	   this.length = this.length -1;
 	   
 	}
+		return this;
+	}
 
-    get  reverse() {
-		if(this._length <2) {
-			return alert('there are no nodes for reversing');
+    reverse() {
+		var last = this._head;
+		if(this.length == 1) {
+			return this;
 		}
-		var nodes = this._nodes.slice(1, this._length+1).reverse();
-		this._nodes.splice(1, this._length, nodes[0], nodes[1], nodes[2]);
-		this._nodes[0].next = this._nodes[1];
-		this._nodes[this._nodes.length-1].previous = this._nodes[this._nodes.length-2];
-		for(var i = 1; i <= this._nodes.length - 2; i++) {
-			this._nodes[i].index = i;
-			this._nodes[i].previous = this._nodes[i-1];
-			this._nodes[i]. next = this._nodes[i+1]
+		last.prev = last.next;
+		last.next = null;
+		this._tail = last;
+		for(var i = 1; i <= this.length-1; i++ ) {
+			last = getPrevious(last);
+		if(i == this.length-1){
+		    last.next = last.prev;
+		    last.prev = null;
+			this._head = last;
+	   } else {
+		   var a = last.next;
+		   last.next = last.prev;
+		   last.prev = a;
+	   }
 		}
-		this._head = this._nodes[1];
-		this._tail = this._nodes[this._length];
+		return this;
 	}
 
     indexOf(data) {
-		for(var i = 0; i <= this._nodes.length-2; i++) {
-		   if (this._nodes[i].data == data) {
-			   return alert("for data(" + data + ") index is " + i);
-		   }
-	   }
-			return alert('there is no this data');
+		var last = this._head;
+		if(last.data == data) {
+			return 0;
+		}
+		for(var i = 1; i < this.length; i++ ) {
+			last = getNext(last);
+			if(last.data == data) {
+			return i;
+			}
+		}
+		return -1;
 	}
+			
 }
 
 module.exports = LinkedList;
 
-/*const two = new LinkedList();
-
-two.clear;
-two.append("one");
-two.append('two');
-two.head;
-two.tail;
-two.at(2);
-two.insertAt(3, 'three');
-two.deleteAt(5);
-two.reverse;*/
+            
