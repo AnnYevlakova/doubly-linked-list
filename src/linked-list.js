@@ -16,7 +16,7 @@ class LinkedList {
     
     append(data) {
         var node = new Node(data);
-		this.length = this.length++;
+		this.length = this.length + 1;
 		if(this.length == 1) {
 			this._head = node;
 			this._tail = node;
@@ -93,7 +93,7 @@ class LinkedList {
 		  		node.previous = last;
 		   		last.next = node;
 	  		}
-	  		this.length = this.length++;
+	  		this.length = this.length + 1;
         }
 	  	return this;
    }
